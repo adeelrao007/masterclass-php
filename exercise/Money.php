@@ -1,45 +1,53 @@
 <?php
 final class Money
 {
-    private readonly string $currency;
-    private int $amount;
-
-    public function __construct(int $amount, string $currency)
-    {
+    public function __construct(
+        private readonly int $amount,
+        private readonly string $currency
+    ) {
         if ($amount < 0) {
-            throw new InvalidArgumentException("Amount cannot be negative.");
+            throw new InvalidArgumentException('Amount cannot be negative');
         }
-        $this->amount = $amount;
-        $this->currency = $currency;
     }
 
-    public function getAmount(): int
+    public function amount(): int
     {
         return $this->amount;
     }
 
-    public function getCurrency(): string
+    public function currency(): string
     {
         return $this->currency;
     }
 
-    public function add(Money $other): self
+    public function add(self $other): self
     {
-        if ($other->currency !== $this->currency) {
-            throw new InvalidArgumentException("Currency mismatch.");
-        }
-        return new self($this->amount + $other->amount, $this->currency);
+        $this->assertSameCurrency($other);
+
+        return new self(
+            $this->amount + $other->amount,
+            $this->currency
+        );
     }
 
-    public function subtract(Money $other): self
+    public function subtract(self $other): self
     {
-        if ($other->currency !== $this->currency) {
-            throw new InvalidArgumentException("Currency mismatch.");
+        $this->assertSameCurrency($other);
+
+        if ($other->amount > $this->amount) {
+            throw new LogicException('Resulting amount cannot be negative');
         }
-        $result = $this->amount - $other->amount;
-        if ($result < 0) {
-            throw new InvalidArgumentException("Resulting amount cannot be negative.");
+
+        return new self(
+            $this->amount - $other->amount,
+            $this->currency
+        );
+    }
+
+    private function assertSameCurrency(self $other): void
+    {
+        if ($this->currency !== $other->currency) {
+            throw new InvalidArgumentException('Currency mismatch');
         }
-        return new self($result, $this->currency);
     }
 }

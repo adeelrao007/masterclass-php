@@ -1,39 +1,47 @@
 <?php
 final class OrderStatus
 {
-    private const CREATED = 'created';
-    private const PAID = 'paid';
-    private const SHIPPED = 'shipped';
-    private const COMPLETED = 'completed';
+    private function __construct(
+        private readonly string $value
+    ) {}
 
-    private static array $transitions = [
-        self::CREATED => [self::PAID],
-        self::PAID => [self::SHIPPED],
-        self::SHIPPED => [self::COMPLETED],
-        self::COMPLETED => [],
-    ];
-
-    private string $status;
-
-    public function __construct(string $status = self::CREATED)
+    public static function created(): self
     {
-        if (!isset(self::$transitions[$status])) {
-            throw new InvalidArgumentException("Invalid initial status.");
-        }
-        $this->status = $status;
+        return new self('created');
     }
 
-    public function getStatus(): string
+    public function pay(): self
     {
-        return $this->status;
+        $this->assertState('created');
+
+        return new self('paid');
     }
 
-    public function advance(string $nextStatus): void
+    public function ship(): self
     {
-        $allowed = self::$transitions[$this->status] ?? [];
-        if (!in_array($nextStatus, $allowed, true)) {
-            throw new LogicException("Invalid status transition from {$this->status} to {$nextStatus}.");
+        $this->assertState('paid');
+
+        return new self('shipped');
+    }
+
+    public function complete(): self
+    {
+        $this->assertState('shipped');
+
+        return new self('completed');
+    }
+
+    public function value(): string
+    {
+        return $this->value;
+    }
+
+    private function assertState(string $expected): void
+    {
+        if ($this->value !== $expected) {
+            throw new LogicException(
+                "Invalid transition from {$this->value}"
+            );
         }
-        $this->status = $nextStatus;
     }
 }
