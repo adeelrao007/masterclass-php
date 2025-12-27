@@ -4,12 +4,25 @@ final class Payment
 {
     private bool $processed;
 
-    public function __construct(private readonly string $id, private readonly string $invoiceId, private readonly int $amount)
+    private function __construct(private readonly string $id, private readonly string $invoiceId, private readonly int $amount)
     {
         if ($amount < 0) {
             throw new InvalidArgumentException('Payment amount cannot be negative.');
         }
         $this->processed = false;
+    }
+
+    public static function create(string $invoiceId, int $amount): self
+    {
+        $id = uniqid('payment_', true);
+        return new self($id, $invoiceId, $amount);
+    }
+
+    public static function reconstitute(string $id, string $invoiceId, int $amount, bool $processed): self
+    {
+        $payment = new self($id, $invoiceId, $amount);
+        $payment->processed = $processed;
+        return $payment;
     }
 
     public function getId(): string { return $this->id; }

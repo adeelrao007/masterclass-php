@@ -26,6 +26,15 @@ final class User
         );
     }
 
+    public static function reconstitute(
+        string $id,
+        Email $email,
+        PasswordHash $hash,
+        bool $active
+    ): self {
+        return new self($id, $email, $hash, $active);
+    }
+
     public function disable(): void
     {
         if (! $this->active) {
