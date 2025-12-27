@@ -30,7 +30,7 @@ final class Payment
     public function getAmount(): int { return $this->amount; }
     public function isProcessed(): bool { return $this->processed; }
 
-    public function process(int $expectedAmount): void
+    public function markProcessed(int $expectedAmount): void
     {
         if ($this->processed) {
             throw new LogicException('Payment already processed.');

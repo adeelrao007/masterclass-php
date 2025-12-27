@@ -30,14 +30,10 @@ final class Invoice
     public function getAmount(): int { return $this->amount; }
     public function isPaid(): bool { return $this->paid; }
 
-    public function pay(Payment $payment): void
+    public function markPaid(): void
     {
         if ($this->paid) {
             throw new LogicException('Invoice already paid');
-        }
-
-        if (! $payment->matchesInvoice($this)) {
-            throw new LogicException('Invalid payment');
         }
 
         $this->paid = true;
