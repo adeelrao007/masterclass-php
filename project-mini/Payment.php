@@ -27,4 +27,9 @@ final class Payment
         }
         $this->processed = true;
     }
+
+    public function matchesInvoice(Invoice $invoice): bool
+    {
+        return $this->invoiceId === $invoice->getId() && $this->amount === $invoice->getAmount();
+    }
 }

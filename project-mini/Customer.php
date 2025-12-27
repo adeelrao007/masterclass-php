@@ -8,8 +8,6 @@ final class Customer
         if (empty($name)) {
             throw new InvalidArgumentException('Customer name required.');
         }
-        $this->id = $id;
-        $this->name = $name;
     }
 
     public function getId(): string { return $this->id; }

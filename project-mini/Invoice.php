@@ -17,11 +17,16 @@ final class Invoice
     public function getAmount(): int { return $this->amount; }
     public function isPaid(): bool { return $this->paid; }
 
-    public function markPaid(): void
+    public function pay(Payment $payment): void
     {
         if ($this->paid) {
-            throw new LogicException('Invoice already paid.');
+            throw new LogicException('Invoice already paid');
         }
+
+        if (! $payment->matchesInvoice($this)) {
+            throw new LogicException('Invalid payment');
+        }
+
         $this->paid = true;
     }
 }

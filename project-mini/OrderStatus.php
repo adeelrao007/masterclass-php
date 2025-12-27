@@ -36,16 +36,6 @@ final class OrderStatus
         return $this->value;
     }
 
-    public function advance(string $nextStatus): self
-    {
-        return match ($nextStatus) {
-            'paid' => $this->pay(),
-            'shipped' => $this->ship(),
-            'completed' => $this->complete(),
-            default => throw new InvalidArgumentException("Unknown status: {$nextStatus}"),
-        };
-    }
-
     private function assertState(string $expected): void
     {
         if ($this->value !== $expected) {

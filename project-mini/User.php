@@ -2,21 +2,56 @@
 
 final class User
 {
+    private bool $active;
 
-    public function __construct(private readonly string $id, private readonly string $email, private readonly string $passwordHash, private readonly bool $active = true)
-    {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('Invalid email address.');
-        }
-        if (empty($passwordHash)) {
-            throw new InvalidArgumentException('Password hash required.');
-        }
+    private function __construct(
+        private readonly string $id,
+        private Email $email,
+        private PasswordHash $passwordHash,
+        bool $active
+    ) {
+        $this->active = $active;
     }
 
-    public function getId(): string { return $this->id; }
-    public function getEmail(): string { return $this->email; }
-    public function isActive(): bool { return $this->active; }
+    public static function register(
+        string $id,
+        Email $email,
+        string $plainPassword
+    ): self {
+        return new self(
+            $id,
+            $email,
+            PasswordHash::fromPlainText($plainPassword),
+            true
+        );
+    }
 
-    public function disable(): void { $this->active = false; }
-    public function enable(): void { $this->active = true; }
+    public function disable(): void
+    {
+        if (! $this->active) {
+            throw new LogicException('User already disabled');
+        }
+
+        $this->active = false;
+    }
+
+    public function changeEmail(Email $newEmail): void
+    {
+        if ($this->email->equals($newEmail)) {
+            return;
+        }
+
+        $this->email = $newEmail;
+    }
+
+    public function changePassword(
+        string $currentPassword,
+        string $newPassword
+    ): void {
+        if (! $this->passwordHash->verify($currentPassword)) {
+            throw new LogicException('Invalid current password');
+        }
+
+        $this->passwordHash = PasswordHash::fromPlainText($newPassword);
+    }
 }

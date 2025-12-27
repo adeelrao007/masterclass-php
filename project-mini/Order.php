@@ -17,8 +17,18 @@ final class Order
     public function getStatus(): OrderStatus { return $this->status; }
     public function getTotal(): int { return $this->total; }
 
-    public function advanceStatus(string $nextStatus): void
+    public function pay(): void
     {
-        $this->status->advance($nextStatus);
+        $this->status = $this->status->pay();
+    }
+
+    public function ship(): void
+    {
+        $this->status = $this->status->ship();
+    }
+
+    public function complete(): void
+    {
+        $this->status = $this->status->complete();
     }
 }
