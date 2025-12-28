@@ -36,6 +36,26 @@ final class OrderStatus
         return $this->value;
     }
 
+    public function isPaid(): bool
+    {
+        return $this->value === 'paid' || $this->value === 'shipped' || $this->value === 'completed';
+    }
+
+    public function isShipped(): bool
+    {
+        return $this->value === 'shipped' || $this->value === 'completed';
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->value === 'completed';
+    }
+
+    public function isRefundable(): bool
+    {
+        return in_array($this->value, ['paid', 'shipped'], true);
+    }
+
     private function assertState(string $expected): void
     {
         if ($this->value !== $expected) {
