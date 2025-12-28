@@ -11,6 +11,6 @@ final class PaymentProcessor
         }
 
         $invoice->markPaid();
-        $payment->markProcessed();
+        $payment->markProcessed($invoice->getAmount());
     }
 }

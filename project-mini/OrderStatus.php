@@ -36,6 +36,11 @@ final class OrderStatus
         return $this->value;
     }
 
+    public function canBePaid(): bool
+    {
+        return $this->value === 'created';
+    }
+
     public function isPaid(): bool
     {
         return $this->value === 'paid' || $this->value === 'shipped' || $this->value === 'completed';

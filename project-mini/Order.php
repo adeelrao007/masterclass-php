@@ -4,7 +4,11 @@ final class Order
 {
     private OrderStatus $status;
 
-    private function __construct(private readonly string $id, private readonly string $customerId, private readonly int $total)
+    private function __construct(
+        private readonly string $id, 
+        private readonly string $customerId, 
+        private readonly int $total
+    )
     {
         if ($total < 0) {
             throw new InvalidArgumentException('Order total cannot be negative.');
@@ -30,9 +34,18 @@ final class Order
     public function getStatus(): OrderStatus { return $this->status; }
     public function getTotal(): int { return $this->total; }
 
-    public function pay(): void
+    public function pay(PaymentId $paymentId): void
     {
+        if (! $this->status->canBePaid()) {
+            throw new LogicException('Order cannot be paid');
+        }
         $this->status = $this->status->pay();
+        $this->recordEvent(new OrderPaid($this->id, $paymentId->value) );
+    }
+
+    private function recordEvent(object $event): void
+    {
+        // Event recording logic would go here
     }
 
     public function ship(): void
@@ -43,5 +56,10 @@ final class Order
     public function complete(): void
     {
         $this->status = $this->status->complete();
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->status->isPaid();
     }
 }
