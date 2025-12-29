@@ -18,6 +18,11 @@ final class Invoice
         return new self($id, $orderId, $amount);
     }
 
+    public static function createForOrder(string $orderId, int $amount): self
+    {
+        return new self($orderId, $amount);
+    }
+
     public static function reconstitute(string $id, string $orderId, int $amount, bool $paid): self
     {
         $invoice = new self($id, $orderId, $amount);

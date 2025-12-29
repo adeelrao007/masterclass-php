@@ -3,6 +3,7 @@
 final class Order
 {
     private OrderStatus $status;
+    private array $events = [];
 
     private function __construct(
         private readonly string $id, 
@@ -45,7 +46,15 @@ final class Order
 
     private function recordEvent(object $event): void
     {
-        // Event recording logic would go here
+        $this->events[] = $event;
+    }
+
+    public function pullEvents(): array
+    {
+        $events = $this->events;
+        $this->events = [];
+
+        return $events;
     }
 
     public function ship(): void
