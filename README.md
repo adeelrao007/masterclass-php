@@ -1,100 +1,100 @@
-System Architecture Overview
-┌──────────────────────────────────────────┐
-│            Presentation Layer            │
-│  (HTTP Controllers / CLI / API Routes)   │
-└───────────────────────┬──────────────────┘
-                        │
-                        ▼
-┌──────────────────────────────────────────┐
-│            Application Layer             │
-│  (Use Cases / Command Handlers)          │
-│                                          │
-│  - Load Aggregate via Repository         │
-│  - Call Domain Behavior                  │
-│  - Save Aggregate                        │
-│  - Dispatch Domain Events                │
-└───────────────────────┬──────────────────┘
-                        │
-                        ▼
-┌──────────────────────────────────────────┐
-│               Domain Layer               │
-│                                          │
-│  Aggregate Roots                         │
-│  ────────────────                        │
-│  Order, Customer, Invoice                │
-│                                          │
-│  Entities                                │
-│  ─────────                               │
-│  Order, Payment                          │
-│                                          │
-│  Value Objects                           │
-│  ─────────────                           │
-│  OrderId, Money, Email, OrderStatus      │
-│                                          │
-│  Domain Services / Policies              │
-│  ──────────────────────                  │
-│  RefundPolicy, OrderCompletionPolicy     │
-│                                          │
-│  Domain Events                           │
-│  ─────────────                           │
-│  OrderPaid, InvoiceIssued                │
-└───────────────────────┬──────────────────┘
-                        │
-                        ▼
-┌──────────────────────────────────────────┐
-│           Infrastructure Layer           │
-│                                          │
-│  - Eloquent Models                       │
-│  - Repository Implementations            │
-│  - Event Listeners                       │
-│  - External Services (Email, Payments)   │
-└──────────────────────────────────────────┘
-
-2️⃣ Laravel Folder Structure (Clean Architecture)
-This structure works in real Laravel apps without fighting the framework.
-
-app/
-├── Domain/
-│   ├── Order/
-│   │   ├── Order.php                 # Aggregate Root
-│   │   ├── OrderStatus.php            # Value Object
-│   │   ├── OrderId.php                # Value Object
-│   │   ├── Events/
-│   │   │   └── OrderPaid.php
-│   │   ├── Policies/
-│   │   │   └── OrderCompletionPolicy.php
-│   │   └── Repositories/
-│   │       └── OrderRepository.php    # Interface
-│   │
-│   ├── Customer/
-│   │   └── Customer.php
-│   │
-│   ├── Invoice/
-│   │   └── Invoice.php
-│
-├── Application/
-│   ├── Order/
-│   │   ├── PayOrder/
-│   │   │   ├── PayOrderCommand.php
-│   │   │   └── PayOrderHandler.php
-│
-├── Infrastructure/
-│   ├── Persistence/
-│   │   └── Eloquent/
-│   │       ├── Models/
-│   │       │   └── OrderModel.php
-│   │       └── Repositories/
-│   │           └── EloquentOrderRepository.php
-│   │
-│   ├── Events/
-│   │   └── Listeners/
-│   │       ├── GenerateInvoiceOnOrderPaid.php
-│   │       └── SendOrderReceiptEmail.php
-│
-├── Http/
-│   └── Controllers/
-│       └── PayOrderController.php
-
+System Architecture Overview<br>
+┌──────────────────────────────────────────┐<br>
+│            Presentation Layer            │<br>
+│  (HTTP Controllers / CLI / API Routes)   │<br>
+└───────────────────────┬──────────────────┘<br>
+                        │<br>
+                        ▼<br>
+┌──────────────────────────────────────────┐<br>
+│            Application Layer             │<br>
+│  (Use Cases / Command Handlers)          │<br>
+│                                          │<br>
+│  - Load Aggregate via Repository         │<br>
+│  - Call Domain Behavior                  │<br>
+│  - Save Aggregate                        │<br>
+│  - Dispatch Domain Events                │<br>
+└───────────────────────┬──────────────────┘<br>
+                        │<br>
+                        ▼<br>
+┌──────────────────────────────────────────┐<br>
+│               Domain Layer               │<br>
+│                                          │<br>
+│  Aggregate Roots                         │<br>
+│  ────────────────                        │<br>
+│  Order, Customer, Invoice                │<br>
+│                                          │<br>
+│  Entities                                │<br>
+│  ─────────                               │<br>
+│  Order, Payment                          │<br>
+│                                          │<br>
+│  Value Objects                           │<br>
+│  ─────────────                           │<br>
+│  OrderId, Money, Email, OrderStatus      │<br>
+│                                          │<br>
+│  Domain Services / Policies              │<br>
+│  ──────────────────────                  │<br>
+│  RefundPolicy, OrderCompletionPolicy     │<br>
+│                                          │<br>
+│  Domain Events                           │<br>
+│  ─────────────                           │<br>
+│  OrderPaid, InvoiceIssued                │<br>
+└───────────────────────┬──────────────────┘<br>
+                        │<br>
+                        ▼<br>
+┌──────────────────────────────────────────┐<br>
+│           Infrastructure Layer           │<br>
+│                                          │<br>
+│  - Eloquent Models                       │<br>
+│  - Repository Implementations            │<br>
+│  - Event Listeners                       │<br>
+│  - External Services (Email, Payments)   │<br>
+└──────────────────────────────────────────┘<br>
+<br>
+2️⃣ Laravel Folder Structure (Clean Architecture)<br>
+This structure works in real Laravel apps without fighting the framework.<br>
+<br>
+app/<br>
+├── Domain/<br>
+│   ├── Order/<br>
+│   │   ├── Order.php                 # Aggregate Root<br>
+│   │   ├── OrderStatus.php            # Value Object<br>
+│   │   ├── OrderId.php                # Value Object<br>
+│   │   ├── Events/<br>
+│   │   │   └── OrderPaid.php<br>
+│   │   ├── Policies/<br>
+│   │   │   └── OrderCompletionPolicy.php<br>
+│   │   └── Repositories/<br>
+│   │       └── OrderRepository.php    # Interface<br>
+│   │<br>
+│   ├── Customer/<br>
+│   │   └── Customer.php<br>
+│   │<br>
+│   ├── Invoice/<br>
+│   │   └── Invoice.php<br>
+│<br>
+├── Application/<br>
+│   ├── Order/<br>
+│   │   ├── PayOrder/<br>
+│   │   │   ├── PayOrderCommand.php<br>
+│   │   │   └── PayOrderHandler.php<br>
+│<br>
+├── Infrastructure/<br>
+│   ├── Persistence/<br>
+│   │   └── Eloquent/<br>
+│   │       ├── Models/<br>
+│   │       │   └── OrderModel.php<br>
+│   │       └── Repositories/<br>
+│   │           └── EloquentOrderRepository.php<br>
+│   │<br>
+│   ├── Events/<br>
+│   │   └── Listeners/<br>
+│   │       ├── GenerateInvoiceOnOrderPaid.php<br>
+│   │       └── SendOrderReceiptEmail.php<br>
+│<br>
+├── Http/<br>
+│   └── Controllers/<br>
+│       └── PayOrderController.php<br>
+<br>
 🔑 Key Rules
 Domain has no Laravel imports
 Repositories interfaces live in Domain
