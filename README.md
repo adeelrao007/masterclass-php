@@ -95,16 +95,16 @@ app/<br>
 │   └── Controllers/<br>
 │       └── PayOrderController.php<br>
 <br>
-🔑 Key Rules
-Domain has no Laravel imports
-Repositories interfaces live in Domain
-Eloquent stays in Infrastructure
-Application layer orchestrates only
-
-3️⃣ Full Request → Domain → Event → Listener Flow
-Step 1 — HTTP Request
-POST /orders/{id}/pay
-
+🔑 Key Rules<br>
+Domain has no Laravel imports<br>
+Repositories interfaces live in Domain<br>
+Eloquent stays in Infrastructure<br>
+Application layer orchestrates only<br>
+<br>
+3️⃣ Full Request → Domain → Event → Listener Flow<br>
+Step 1 — HTTP Request<br>
+POST /orders/{id}/pay<br>
+<br>
 final class PayOrderController
 {
     public function __invoke(string $orderId, Request $request)
@@ -119,8 +119,8 @@ final class PayOrderController
         return response()->json(['status' => 'ok']);
     }
 }
-
-Step 2 — Application Layer (Use Case)
+<br>
+Step 2 — Application Layer (Use Case)<br>
 final class PayOrderHandler
 {
     public function __construct(
@@ -142,12 +142,12 @@ final class PayOrderHandler
             $order->pullEvents()
         );
     }
-}
-✔ Transaction here
-✔ Domain untouched
-✔ Events dispatched after commit
-
-Step 3 — Domain Aggregate Emits Event
+}<br>
+✔ Transaction here<br>
+✔ Domain untouched<br>
+✔ Events dispatched after commit<br>
+<br>
+Step 3 — Domain Aggregate Emits Event<br>
 final class Order
 {
     public function pay(PaymentId $paymentId): void
@@ -158,11 +158,11 @@ final class Order
             new OrderPaid($this->id, $paymentId)
         );
     }
-}
-✔ Entity makes decision
-✔ Event records fact
-
-Step 4 — Event Listener Reacts
+}<br>
+✔ Entity makes decision<br>
+✔ Event records fact<br>
+<br>
+Step 4 — Event Listener Reacts<br>
 final class GenerateInvoiceOnOrderPaid
 {
     public function handle(OrderPaid $event): void
@@ -171,50 +171,49 @@ final class GenerateInvoiceOnOrderPaid
 
         $this->invoices->save($invoice);
     }
-}
-✔ Separate transaction
-✔ Can retry
-✔ No coupling
-
-🧩 Architecture Overview
-This project follows Domain-Driven Design (DDD) and Clean Architecture principles.
-
-Core Concepts
-
-Entities
-Objects with identity and lifecycle (Order, Customer).
-They protect business invariants and contain behavior.
-
-Value Objects
-Immutable, identity-less objects (Money, Email, OrderStatus).
-They validate and encapsulate domain rules.
-
-Aggregates
-Consistency boundaries.
-Only the Aggregate Root may be accessed externally.
-
-Repositories
-Abstract persistence behind domain interfaces.
-The domain does not know how data is stored.
-
-Domain Events
-Facts about something that already happened.
-Used to decouple aggregates and enable eventual consistency.
-
-Application Services
-Orchestrate use cases.
-They load aggregates, call domain behavior, persist changes, and dispatch events.
-
-Why This Architecture?
-Prevents anemic models
-Avoids ORM-driven design
-Enables independent scaling
-Keeps business rules framework-agnostic
-Improves long-term maintainability
-
-One Golden Rule
-Entities decide.
-Value Objects validate.
-Repositories persist.
-Events notify.
-Application services orchestrate.
+}<br>
+✔ Separate transaction<br>
+✔ Can retry<br>
+✔ No coupling<br>
+<br>
+🧩 Architecture Overview<br>
+This project follows Domain-Driven Design (DDD) and Clean Architecture principles.<br>
+<br>
+Core Concepts<br>
+Entities<br>
+Objects with identity and lifecycle (Order, Customer).<br>
+They protect business invariants and contain behavior.<br>
+<br>
+Value Objects<br>
+Immutable, identity-less objects (Money, Email, OrderStatus).<br>
+They validate and encapsulate domain rules.<br>
+<br>
+Aggregates<br>
+Consistency boundaries.<br>
+Only the Aggregate Root may be accessed externally.<br>
+<br>
+Repositories<br>
+Abstract persistence behind domain interfaces.<br>
+The domain does not know how data is stored.<br>
+<br>
+Domain Events<br>
+Facts about something that already happened.<br>
+Used to decouple aggregates and enable eventual consistency.<br>
+<br>
+Application Services<br>
+Orchestrate use cases.<br>
+They load aggregates, call domain behavior, persist changes, and dispatch events.<br>
+<br>
+Why This Architecture?<br>
+Prevents anemic models<br>
+Avoids ORM-driven design<br>
+Enables independent scaling<br>
+Keeps business rules framework-agnostic<br>
+Improves long-term maintainability<br>
+<br>
+One Golden Rule<br>
+Entities decide.<br>
+Value Objects validate.<br>
+Repositories persist.<br>
+Events notify.<br>
+Application services orchestrate.<br>
