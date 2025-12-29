@@ -26,10 +26,26 @@ class EloquentOrderRepository implements OrderRepository
 
     private function reconstitute(OrderModel $orderModel): Order
     {
-        return new Order(
+        return Order::reconstitute(
             new OrderId($orderModel->id),
-            // ...other fields...
-            new OrderStatus($orderModel->status)
+            'customer', // assuming customerId is stored elsewhere
+            0, // assuming total is stored elsewhere
+            new OrderStatus($orderModel->status),
+            // other persisted fields
         );
+    }
+
+    public function nextIdentity(): OrderId
+    {
+        return OrderId::generate();
+    }
+
+    public function getById(string $id): Order
+    {
+        $orderModel = OrderModel::where('id', $id)->first();
+        if (!$orderModel) {
+            throw new RuntimeException("Order not found: " . $id);
+        }
+        return $this->reconstitute($orderModel);
     }
 }

@@ -6,5 +6,5 @@ interface OrderRepository
 
     public function getById(string $id): Order;
 
-    public function nextIdentity(): string;
+    public function nextIdentity(): OrderId;
 }
