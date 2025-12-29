@@ -2,20 +2,17 @@
 
 final class PayOrderHandler
 {
-    public function __construct(
-        private OrderRepository $orders,
-        private EventDispatcher $events
-    ) {}
-
-    public function handle(string $orderId, string $paymentId): void
+    public function handle(OrderId $orderId, PaymentId $paymentId): void
     {
-        $order = $this->orders->getById($orderId);
+        DB::transaction(function () use ($orderId, $paymentId) {
+            $order = $this->orders->byId($orderId);
 
-        $order->pay($paymentId);
+            $order->pay($paymentId);
 
-        $this->orders->save($order);
+            $this->orders->save($order);
+        });
 
-        $this->events->dispatchAll(
+        $this->dispatcher->dispatchAll(
             $order->pullEvents()
         );
     }
